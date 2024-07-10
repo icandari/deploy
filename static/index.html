@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Check Waitlist Position</title>
+    <link rel="stylesheet" type="text/css" href="static/Index.css">
+    <style>
+        .logo {
+            float: left; /* Align logo to the left */
+            margin-right: 10px; /* Adjust margin as needed */
+        }
+        .separator {
+            border-left: 2px solid black; /* Skinny black line separator */
+            height: 50px; /* Height of the line */
+            margin: 0 10px; /* Adjust margin as needed */
+        }
+    </style>
+    <script>
+        async function checkPosition() {
+            const studentId = document.getElementById('studentId').value;
+            const response = await fetch(`/student/${studentId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('application_date').innerText = `Application Date: ${data.application_date}`;
+                document.getElementById('general_position').innerText = `General Position: ${data.general_position}`;
+                document.getElementById('activeStatus').innerText = `Active Status: ${data.active_status}`;
+                if (data.active_status === 'Active') {
+                    document.getElementById('active_position').innerText = `${data.position_label}: ${data.active_position} (There are ${data.inactive_ahead} inactive people ahead of you)`;
+                } else {
+                    document.getElementById('active_position').innerText = "";
+                }
+                document.getElementById('message').innerHTML = data.message; // Use innerHTML to handle HTML tags
+                document.getElementById('result').innerText = "";
+            } else {
+                document.getElementById('application_date').innerText = "";
+                document.getElementById('general_position').innerText = "";
+                document.getElementById('active_position').innerText = "";
+                document.getElementById('activeStatus').innerText = "";
+                document.getElementById('message').innerText = "";
+                document.getElementById('result').innerText = data.error;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="static/BYUH.png" alt="Logo" height="70"> <!-- Increased height for a bigger logo -->
+        </div>
+        <div class="separator"></div>
+        <h1>Check Waitlist Position</h1>
+        <input type="text" id="studentId" placeholder="Enter Student ID">
+        <button onclick="checkPosition()">Check</button>
+        <p id="application_date"></p>
+        <p id="activeStatus"></p>
+        <p id="general_position"></p>
+        <p id="active_position"></p>
+        <p id="message"></p>
+        <p id="result"></p>
+    </div>
+</body>
+</html>
